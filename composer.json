@@ -1,0 +1,23 @@
+{
+    "name": "vkzhuk/diff_calc",
+    "bin": [
+        "bin/gendiff"
+    ],
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Viktor Zhukouskiy",
+            "email": "vikt.anmail@gmail.com"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "src/doc.php"
+        ]
+    },
+    "require": {
+        "php": "7.2.*",
+        "docopt/docopt": "^1.0"
+    }
+}
