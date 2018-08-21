@@ -2,26 +2,32 @@
 
 namespace Differ;
 
-const VALID_FORMATS = ['json'];
+const VALID_FORMATS = ['json', 'yml'];
 
-function calcDiff($fistFileName, $secondFileName, $fileFormat): array
+function generateDiff($fistFileName, $secondFileName, $fileFormat): array
 {
     $resultDiff = [];
     if (in_array($fileFormat, VALID_FORMATS)) {
         switch ($fileFormat) {
             case 'json':
-                $resultDiff = calcJsonDiff($fistFileName, $secondFileName);
+                $firstFile = new JsonFile($fistFileName);
+                $secondFile = new JsonFile($secondFileName);
+                $resultDiff = calculateDiff($firstFile, $secondFile);
+                break;
+            case 'yml':
+                $firstFile = new YamlFile($fistFileName);
+                $secondFile = new YamlFile($secondFileName);
+                $resultDiff = calculateDiff($firstFile, $secondFile);
                 break;
         }
     }
     return $resultDiff;
 }
 
-function calcJsonDiff($firstFileName, $secondFileName): array
+function calculateDiff(File $firstFile, File $secondFile): array
 {
-    $firstFileArrCont = json_decode(file_get_contents($firstFileName), true);
-    $secondFileArrCont = json_decode(file_get_contents($secondFileName), true);
-
+    $firstFileArrCont = $firstFile->fileParse();
+    $secondFileArrCont = $secondFile->fileParse();
     $uniqValFirstFile = array_reduce(
         array_keys($firstFileArrCont),
         function ($carry, $key) use ($firstFileArrCont, $secondFileArrCont) {

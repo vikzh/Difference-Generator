@@ -26,5 +26,5 @@ $args = \Docopt::handle($doc);
 $firstFileName = $args["<firstFile>"];
 $secondFileName = $args["<secondFile>"];
 $fileFormat = $args["--format"];
-$diff = \Differ\calcDiff($firstFileName, $secondFileName, $fileFormat);
+$diff = \Differ\generateDiff($firstFileName, $secondFileName, $fileFormat);
 print_r($diff);
