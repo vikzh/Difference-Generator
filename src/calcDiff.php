@@ -7,7 +7,7 @@ const VALID_FORMATS = ['json'];
 function calcDiff($fistFileName, $secondFileName, $fileFormat): array
 {
     $resultDiff = [];
-    if (isCorrectInput($fistFileName, $secondFileName, $fileFormat)) {
+    if (in_array($fileFormat, VALID_FORMATS)) {
         switch ($fileFormat) {
             case 'json':
                 $resultDiff = calcJsonDiff($fistFileName, $secondFileName);
@@ -17,59 +17,44 @@ function calcDiff($fistFileName, $secondFileName, $fileFormat): array
     return $resultDiff;
 }
 
-function isCorrectInput($firstFileName, $secondFileName, $fileFormat): bool
-{
-    try {
-        if (!file_exists($firstFileName)) {
-            throw new \Exception('First File  does not exist');
-        } elseif (!file_exists($secondFileName)) {
-            throw new \Exception('First File  does not exist');
-        } elseif (!in_array($fileFormat, VALID_FORMATS)) {
-            throw new \Exception('First File  does not exist');
-        }
-    } catch (\Exception $e) {
-        echo $e . PHP_EOL;
-    }
-    return true;
-}
-
 function calcJsonDiff($firstFileName, $secondFileName): array
 {
-    try {
-        $firstFileArrCont = json_decode(file_get_contents($firstFileName), true);
-        $secondFileArrCont = json_decode(file_get_contents($secondFileName), true);
-        $resultDiff = [];
+    $firstFileArrCont = json_decode(file_get_contents($firstFileName), true);
+    $secondFileArrCont = json_decode(file_get_contents($secondFileName), true);
 
-        foreach ($firstFileArrCont as $key => $value) {
+    $uniqValFirstFile = array_reduce(
+        array_keys($firstFileArrCont),
+        function ($carry, $key) use ($firstFileArrCont, $secondFileArrCont) {
             if (array_key_exists($key, $secondFileArrCont)) {
-                if ($value === $secondFileArrCont[$key]) {
-                    $resultDiff[] = "  $key: " . (is_bool($value) ? boolAsString($value) : $value);
+                if ($firstFileArrCont[$key] === $secondFileArrCont[$key]) {
+                    $carry[] = "  $key: " . changeIfBool($firstFileArrCont[$key]);
                 } else {
-                    $resultDiff[] = "+ $key: " . (is_bool($secondFileArrCont[$key])
-                            ? boolAsString($secondFileArrCont[$key]) : $secondFileArrCont[$key]);
-                    $resultDiff[] = "- $key: " . (is_bool($value) ? boolAsString($value) : $value);
+                    $carry[] = "+ $key: " . changeIfBool($secondFileArrCont[$key]);
+                    $carry[] = "- $key: " . changeIfBool($firstFileArrCont[$key]);
                 }
             } else {
-                $resultDiff[] = "- $key: " . (is_bool($value) ? boolAsString($value) : $value);
+                $carry[] = "- $key: " . changeIfBool($firstFileArrCont[$key]);
             }
-        }
+            return $carry;
+        },
+        []
+    );
 
-        $diffArr = array_diff_key($secondFileArrCont, $firstFileArrCont);
-        foreach ($diffArr as $key => $value) {
-            $resultDiff[] = "+ $key: " . (is_bool($value) ? boolAsString($value) : $value);
-        }
-        return $resultDiff;
-    } catch (\Exception $e) {
-        echo $e . PHP_EOL;
-    }
-    return [];
+    $diffArr = array_diff_key($secondFileArrCont, $firstFileArrCont);
+
+    $uniqValSecondFile = array_map(function ($key) use ($diffArr) {
+        return "+ $key: " . changeIfBool($diffArr[$key]);
+    }, array_keys($diffArr));
+
+    return array_merge($uniqValFirstFile, $uniqValSecondFile);
+}
+
+function changeIfBool($value)
+{
+    return is_bool($value) ? boolAsString($value) : $value;
 }
 
 function boolAsString($value)
 {
-    if ($value) {
-        return 'true';
-    } else {
-        return 'false';
-    }
+    return $value ? 'true' : 'false';
 }
