@@ -43,19 +43,20 @@ function calcJsonDiff($firstFileName, $secondFileName): array
         foreach ($firstFileArrCont as $key => $value) {
             if (array_key_exists($key, $secondFileArrCont)) {
                 if ($value === $secondFileArrCont[$key]) {
-                    $resultDiff[] = "  $key: " . (is_bool($value) ? boolAsSctring($value) : $value);
+                    $resultDiff[] = "  $key: " . (is_bool($value) ? boolAsString($value) : $value);
                 } else {
-                    $resultDiff[] = "- $key: " . (is_bool($value) ? boolAsSctring($value) : $value);
-                    $resultDiff[] = "+ $key: " . (is_bool($secondFileArrCont[$key]) ? boolAsSctring($secondFileArrCont[$key]) : $secondFileArrCont[$key]);
+                    $resultDiff[] = "+ $key: " . (is_bool($secondFileArrCont[$key])
+                            ? boolAsString($secondFileArrCont[$key]) : $secondFileArrCont[$key]);
+                    $resultDiff[] = "- $key: " . (is_bool($value) ? boolAsString($value) : $value);
                 }
             } else {
-                $resultDiff[] = "- $key: " . (is_bool($value) ? boolAsSctring($value) : $value);
+                $resultDiff[] = "- $key: " . (is_bool($value) ? boolAsString($value) : $value);
             }
         }
 
         $diffArr = array_diff_key($secondFileArrCont, $firstFileArrCont);
         foreach ($diffArr as $key => $value) {
-            $resultDiff[] = "+ $key: " . (is_bool($value) ? boolAsSctring($value) : $value);
+            $resultDiff[] = "+ $key: " . (is_bool($value) ? boolAsString($value) : $value);
         }
         return $resultDiff;
     } catch (\Exception $e) {
@@ -64,7 +65,7 @@ function calcJsonDiff($firstFileName, $secondFileName): array
     return [];
 }
 
-function boolAsSctring($value)
+function boolAsString($value)
 {
     if ($value) {
         return 'true';
