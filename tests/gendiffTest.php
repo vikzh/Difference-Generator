@@ -25,6 +25,7 @@ DOC;
             )
         ));
 
+
         $this->assertEquals($correctDiff, implode(
             PHP_EOL,
             generateDiff(
