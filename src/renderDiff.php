@@ -2,7 +2,7 @@
 
 namespace Differ;
 
-function render($astTree) : string
+function render($astTree): string
 {
     $resultArray[] = "{" . PHP_EOL;
     $resultArray[] = renderBody($astTree);
@@ -13,7 +13,19 @@ function render($astTree) : string
     return $strResult;
 }
 
-function renderBody($astTree, $level = 1) : string
+function renderBody($astTree, $level = 1): string
+{
+    $renderedArray = array_reduce($astTree, function ($carry, $arr) use ($level) {
+        $carry[] = doRenderMethod($arr['type'], $arr, $level);
+        return $carry;
+    }, []);
+
+    $strBodyResult = implode('', $renderedArray);
+
+    return $strBodyResult;
+}
+
+function doRenderMethod($method, $firstParam, $secondParam)
 {
     $notUpdate = function ($item, $level) {
         $line = generateDepth($level - 1) . "    {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
@@ -41,8 +53,8 @@ function renderBody($astTree, $level = 1) : string
         $internalArray[] = generateDepth($level) . $item['key'] . ": {" . PHP_EOL;
         $internalArray[] = renderBody($item['value'], ($level + 1));
         $internalArray[] = generateDepth($level) . "}" . PHP_EOL;
-        $str = implode('', $internalArray);
-        return $str;
+        $treeAsString = implode('', $internalArray);
+        return $treeAsString;
     };
 
     $actionTypes = [
@@ -53,25 +65,13 @@ function renderBody($astTree, $level = 1) : string
         'nestedTree' => $nestedTree
     ];
 
-    $renderedArray = array_reduce($astTree, function ($carry, $arr) use ($actionTypes, $level) {
-        $carry[] = $actionTypes[$arr['type']]($arr, $level);
-        return $carry;
-    }, []);
-
-
-    $strResult = implode('', $renderedArray);
-
-    return $strResult;
+    return $actionTypes[$method]($firstParam, $secondParam);
 }
 
-function castValue($value, $level = 1) : string
+function castValue($value, $level = 1): string
 {
     if (is_bool($value)) {
-        if ($value == true) {
-            $result = 'true';
-        } else {
-            $result = 'false';
-        }
+        $result = $value === true ? 'true' : 'false';
     } elseif (is_array($value)) {
         $jsonFromArr = json_encode($value, JSON_PRETTY_PRINT);
         $fixedJson = str_replace('"', '', $jsonFromArr);
@@ -83,12 +83,12 @@ function castValue($value, $level = 1) : string
     return $result;
 }
 
-function boolAsString($value) : string
+function boolAsString($value): string
 {
     return $value ? 'true' : 'false';
 }
 
-function generateDepth($level) : string
+function generateDepth($level): string
 {
     return $level > 0 ? '    ' . generateDepth($level - 1) : '';
 }
