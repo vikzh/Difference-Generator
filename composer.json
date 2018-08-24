@@ -13,10 +13,12 @@
     ],
     "autoload": {
         "files": [
+            "src/render.php",
             "src/genDiff.php",
             "src/stringParser.php",
             "src/genAST.php",
-            "src/renderDiff.php"
+            "src/renderDiff.php",
+            "src/renderPlain.php"
         ],
         "psr-4": {
             "Differ\\": "src",

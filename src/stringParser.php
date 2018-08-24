@@ -4,7 +4,6 @@ namespace Differ;
 
 use Symfony\Component\Yaml\Yaml;
 
-const VALID_EXTENSIONS = ['json', 'yml'];
 
 function stringParse($content, $contentExtension)
 {

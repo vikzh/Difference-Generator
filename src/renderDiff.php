@@ -2,10 +2,10 @@
 
 namespace Differ;
 
-function render($astTree): string
+function renderChangeTree($astTree): string
 {
     $resultArray[] = "{" . PHP_EOL;
-    $resultArray[] = renderBody($astTree);
+    $resultArray[] = renderChangeTreeBody($astTree);
     $resultArray[] = "}";
 
     $strResult = implode('', $resultArray);
@@ -13,10 +13,10 @@ function render($astTree): string
     return $strResult;
 }
 
-function renderBody($astTree, $level = 1): string
+function renderChangeTreeBody($astTree, $level = 1): string
 {
     $renderedArray = array_reduce($astTree, function ($carry, $arr) use ($level) {
-        $carry[] = doRenderMethod($arr['type'], $arr, $level);
+        $carry[] = doRenderMethodForTree($arr['type'], $arr, $level);
         return $carry;
     }, []);
 
@@ -25,7 +25,7 @@ function renderBody($astTree, $level = 1): string
     return $strBodyResult;
 }
 
-function doRenderMethod($method, $firstParam, $secondParam)
+function doRenderMethodForTree($method, $firstParam, $secondParam)
 {
     $notUpdate = function ($item, $level) {
         $line = generateDepth($level - 1) . "    {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
@@ -51,7 +51,7 @@ function doRenderMethod($method, $firstParam, $secondParam)
 
     $nestedTree = function ($item, $level) {
         $internalArray[] = generateDepth($level) . $item['key'] . ": {" . PHP_EOL;
-        $internalArray[] = renderBody($item['value'], ($level + 1));
+        $internalArray[] = renderChangeTreeBody($item['value'], ($level + 1));
         $internalArray[] = generateDepth($level) . "}" . PHP_EOL;
         $treeAsString = implode('', $internalArray);
         return $treeAsString;
@@ -81,11 +81,6 @@ function castValue($value, $level = 1): string
         $result = $value;
     }
     return $result;
-}
-
-function boolAsString($value): string
-{
-    return $value ? 'true' : 'false';
 }
 
 function generateDepth($level): string
