@@ -2,67 +2,93 @@
 
 namespace Differ;
 
-function render($astTree)
+function render($astTree) : string
 {
-    echo var_dump($astTree);
-    $notUpdate = function ($item) {
-        $line = "  {$item['key']}: " . castValue($item['value']);
+    $resultArray[] = "{" . PHP_EOL;
+    $resultArray[] = renderBody($astTree);
+    $resultArray[] = "}";
+
+    $strResult = implode('', $resultArray);
+
+    return $strResult;
+}
+
+function renderBody($astTree, $level = 1) : string
+{
+    $notUpdate = function ($item, $level) {
+        $line = generateDepth($level - 1) . "    {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
         return $line;
     };
 
-    $oldUpdate = function ($item) {
-        $line = "- {$item['key']}: " . castValue($item['oldValue']);
+    $update = function ($item, $level) {
+        $line = generateDepth($level - 1) . "  - {$item['key']}: " . castValue($item['oldValue'], $level) . PHP_EOL .
+            generateDepth($level - 1) . "  + {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
+
         return $line;
     };
 
-    $newUpdate = function ($item) {
-        $line = "+ {$item['key']}: " . castValue($item['value']);
+    $delUpdate = function ($item, $level) {
+        $line = generateDepth($level - 1) . "  - {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
         return $line;
     };
 
-    $delUpdate = function ($item) {
-        $line = "- {$item['key']}: " . castValue($item['value']);
+    $addUpdate = function ($item, $level) {
+        $line = generateDepth($level - 1) . "  + {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
         return $line;
     };
 
-    $addUpdate = function ($item) {
-        $line = "+ {$item['key']}: " . castValue($item['value']);
-        return $line;
-    };
-
-    $nestedTree = function ($array) {
-        return json_encode($array);
+    $nestedTree = function ($item, $level) {
+        $internalArray[] = generateDepth($level) . $item['key'] . ": {" . PHP_EOL;
+        $internalArray[] = renderBody($item['value'], ($level + 1));
+        $internalArray[] = generateDepth($level) . "}" . PHP_EOL;
+        $str = implode('', $internalArray);
+        return $str;
     };
 
     $actionTypes = [
         'notUpdate' => $notUpdate,
-        'oldUpdate' => $oldUpdate,
-        'newUpdate' => $newUpdate,
+        'update' => $update,
         'delete' => $delUpdate,
         'add' => $addUpdate,
         'nestedTree' => $nestedTree
     ];
 
-    $renderedArray = array_reduce($astTree, function ($carry, $arr) use ($actionTypes) {
-        if ($arr['type'] !== 'update') {
-            $carry[] = $actionTypes[$arr['type']]($arr);
-            return $carry;
-        } else {
-            $carry[] = $actionTypes['newUpdate']($arr);
-            $carry[] = $actionTypes['oldUpdate']($arr);
-            return $carry;
-        }
+    $renderedArray = array_reduce($astTree, function ($carry, $arr) use ($actionTypes, $level) {
+        $carry[] = $actionTypes[$arr['type']]($arr, $level);
+        return $carry;
     }, []);
 
-    return $renderedArray;
+
+    $strResult = implode('', $renderedArray);
+
+    return $strResult;
 }
 
-function castValue($value)
+function castValue($value, $level = 1) : string
 {
-    return is_bool($value) ? boolAsString($value) : $value;
+    if (is_bool($value)) {
+        if ($value == true) {
+            $result = 'true';
+        } else {
+            $result = 'false';
+        }
+    } elseif (is_array($value)) {
+        $jsonFromArr = json_encode($value, JSON_PRETTY_PRINT);
+        $fixedJson = str_replace('"', '', $jsonFromArr);
+        $depth = generateDepth($level);
+        $result = str_replace("\n", "\n$depth", $fixedJson);
+    } else {
+        $result = $value;
+    }
+    return $result;
 }
 
-function boolAsString($value)
+function boolAsString($value) : string
 {
     return $value ? 'true' : 'false';
+}
+
+function generateDepth($level) : string
+{
+    return $level > 0 ? '    ' . generateDepth($level - 1) : '';
 }

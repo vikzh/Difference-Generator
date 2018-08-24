@@ -4,7 +4,7 @@ namespace Differ;
 
 use function Funct\Collection\union;
 
-function genAST($firstArray, $secondArray)
+function genAST($firstArray, $secondArray) : array
 {
     $unitedArray = union(array_keys($firstArray), array_keys($secondArray));
 

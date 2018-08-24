@@ -2,7 +2,7 @@
 
 namespace Differ;
 
-function generateDiff($fistFileName, $secondFileName, $fileFormat): array
+function generateDiff($fistFileName, $secondFileName, $fileFormat): string
 {
     $firstParsedArray = stringParse(file_get_contents($fistFileName), $fileFormat);
     $secondParsedArray = stringParse(file_get_contents($secondFileName), $fileFormat);
@@ -10,5 +10,6 @@ function generateDiff($fistFileName, $secondFileName, $fileFormat): array
     $astTree = genAST($firstParsedArray, $secondParsedArray);
 
     $resultDiff = render($astTree);
+
     return $resultDiff;
 }

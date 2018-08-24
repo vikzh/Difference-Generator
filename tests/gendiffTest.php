@@ -9,30 +9,33 @@ class CalcDiffTest extends TestCase
 {
     public function testCalcDiff()
     {
-        $correctDiff = <<<DOC
-  host: domain.io
-+ timeout: 20
-- timeout: 50
-- proxy: 123.234.53.22
-+ verbose: true
-DOC;
-        $this->assertEquals($correctDiff, implode(
-            PHP_EOL,
+        $correctData1 = file_get_contents("tests/data/correctData1");
+        $this->assertEquals(
+            $correctData1,
             generateDiff(
                 'tests/data/before.json',
                 'tests/data/after.json',
                 'json'
             )
-        ));
+        );
 
-
-        $this->assertEquals($correctDiff, implode(
-            PHP_EOL,
+        $this->assertEquals(
+            $correctData1,
             generateDiff(
                 'tests/data/before.yml',
                 'tests/data/after.yml',
                 'yml'
             )
-        ));
+        );
+
+        $correctData2 = file_get_contents("tests/data/correctData2");
+        $this->assertEquals(
+            $correctData2,
+            generateDiff(
+                'tests/data/before2.json',
+                'tests/data/after2.json',
+                'json'
+            )
+        );
     }
 }
