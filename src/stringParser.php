@@ -4,7 +4,6 @@ namespace Differ;
 
 use Symfony\Component\Yaml\Yaml;
 
-
 function stringParse($content, $contentExtension)
 {
     $jsonParse = function ($content) {
@@ -16,6 +15,5 @@ function stringParse($content, $contentExtension)
     };
 
     $extensionHandler = ['json' => $jsonParse, 'yml' => $yamlParse];
-
     return $extensionHandler[$contentExtension]($content);
 }

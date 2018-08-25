@@ -18,7 +18,8 @@
             "src/stringParser.php",
             "src/genAST.php",
             "src/renderDiff.php",
-            "src/renderPlain.php"
+            "src/renderPlain.php",
+            "src/renderJson.php"
         ],
         "psr-4": {
             "Differ\\": "src",

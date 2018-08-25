@@ -4,10 +4,9 @@ namespace Differ;
 
 use function Funct\Collection\union;
 
-function genAST($firstArray, $secondArray) : array
+function genAST($firstArray, $secondArray): array
 {
     $unitedArray = union(array_keys($firstArray), array_keys($secondArray));
-
     $resultArr = array_map(function ($key) use ($firstArray, $secondArray, $unitedArray) {
         if (array_key_exists($key, $firstArray) && array_key_exists($key, $secondArray)) {
             if (!is_array($firstArray[$key]) && !is_array($secondArray[$key])) {
@@ -28,6 +27,5 @@ function genAST($firstArray, $secondArray) : array
             return ['key' => $key, 'value' => $secondArray[$key], 'type' => 'add'];
         }
     }, $unitedArray);
-
     return $resultArr;
 }

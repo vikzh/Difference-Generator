@@ -4,9 +4,7 @@ namespace Differ;
 
 function renderPlain($astTree): string
 {
-    $strResult = renderPlainBody($astTree);
-
-    return $strResult;
+    return renderPlainBody($astTree);
 }
 
 function renderPlainBody($astTree, $path = ''): string
@@ -15,10 +13,7 @@ function renderPlainBody($astTree, $path = ''): string
         $carry[] = doRenderMethodForPlain($arr['type'], $arr, $path);
         return $carry;
     }, []);
-
-    $strBodyResult = implode('', $renderedArray);
-
-    return $strBodyResult;
+    return implode('', $renderedArray);
 }
 
 function doRenderMethodForPlain($method, $firstParam, $secondParam)
@@ -28,24 +23,21 @@ function doRenderMethodForPlain($method, $firstParam, $secondParam)
     };
 
     $update = function ($item, $parent) {
-        $line = "Property '$parent{$item['key']}' was changed. From '" . castValuePlain($item['oldValue']) . "' to '"
+        return "Property '$parent{$item['key']}' was changed. From '" . castValuePlain($item['oldValue']) . "' to '"
             . castValuePlain($item['value']) . "'" . PHP_EOL;
-        return $line;
     };
 
     $delUpdate = function ($item, $parent) {
-        $line = "Property '$parent{$item['key']}' was removed" . PHP_EOL;
-        return $line;
+        return "Property '$parent{$item['key']}' was removed" . PHP_EOL;
     };
 
     $addUpdate = function ($item, $parent) {
-        $line = "Property '$parent{$item['key']}' was added with value: '" . castValuePlain($item['value']) . "'" . PHP_EOL;
-        return $line;
+        return "Property '$parent{$item['key']}' was added with value: '" .
+            castValuePlain($item['value']) . "'" . PHP_EOL;
     };
 
     $nestedTree = function ($item, $parent) {
-        $line = renderPlainBody($item['value'], "$parent{$item['key']}.");
-        return $line;
+        return renderPlainBody($item['value'], "$parent{$item['key']}.");
     };
 
     $actionTypes = [
@@ -55,7 +47,6 @@ function doRenderMethodForPlain($method, $firstParam, $secondParam)
         'add' => $addUpdate,
         'nestedTree' => $nestedTree
     ];
-
     return $actionTypes[$method]($firstParam, $secondParam);
 }
 
@@ -69,16 +60,4 @@ function castValuePlain($value, $level = 1): string
         $result = $value;
     }
     return $result;
-}
-
-function checkNewLineSymbol($strResult)
-{
-    $lengthOfResult = strlen($strResult);
-    if ($lengthOfResult >= 2) {
-        if (($strResult[$lengthOfResult - 2] === '\\') && ($strResult[$lengthOfResult - 2] === 'n')) {
-            array_pop($strResult);
-            array_pop($strResult);
-        }
-    }
-    return $strResult;
 }

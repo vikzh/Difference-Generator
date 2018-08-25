@@ -7,10 +7,7 @@ function renderChangeTree($astTree): string
     $resultArray[] = "{" . PHP_EOL;
     $resultArray[] = renderChangeTreeBody($astTree);
     $resultArray[] = "}";
-
-    $strResult = implode('', $resultArray);
-
-    return $strResult;
+    return implode('', $resultArray);
 }
 
 function renderChangeTreeBody($astTree, $level = 1): string
@@ -19,34 +16,26 @@ function renderChangeTreeBody($astTree, $level = 1): string
         $carry[] = doRenderMethodForTree($arr['type'], $arr, $level);
         return $carry;
     }, []);
-
-    $strBodyResult = implode('', $renderedArray);
-
-    return $strBodyResult;
+    return implode('', $renderedArray);
 }
 
 function doRenderMethodForTree($method, $firstParam, $secondParam)
 {
     $notUpdate = function ($item, $level) {
-        $line = generateDepth($level - 1) . "    {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
-        return $line;
+        return generateDepth($level - 1) . "    {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
     };
 
     $update = function ($item, $level) {
-        $line = generateDepth($level - 1) . "  - {$item['key']}: " . castValue($item['oldValue'], $level) . PHP_EOL .
+        return generateDepth($level - 1) . "  - {$item['key']}: " . castValue($item['oldValue'], $level) . PHP_EOL .
             generateDepth($level - 1) . "  + {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
-
-        return $line;
     };
 
     $delUpdate = function ($item, $level) {
-        $line = generateDepth($level - 1) . "  - {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
-        return $line;
+        return generateDepth($level - 1) . "  - {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
     };
 
     $addUpdate = function ($item, $level) {
-        $line = generateDepth($level - 1) . "  + {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
-        return $line;
+        return generateDepth($level - 1) . "  + {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
     };
 
     $nestedTree = function ($item, $level) {
@@ -64,7 +53,6 @@ function doRenderMethodForTree($method, $firstParam, $secondParam)
         'add' => $addUpdate,
         'nestedTree' => $nestedTree
     ];
-
     return $actionTypes[$method]($firstParam, $secondParam);
 }
 
