@@ -21,21 +21,17 @@ function doRenderMethodForPlain($method, $firstParam, $secondParam)
     $notUpdate = function ($item) {
         return '';
     };
-
     $update = function ($item, $parent) {
         return "Property '$parent{$item['key']}' was changed. From '" . castValuePlain($item['oldValue']) . "' to '"
             . castValuePlain($item['value']) . "'" . PHP_EOL;
     };
-
     $delUpdate = function ($item, $parent) {
         return "Property '$parent{$item['key']}' was removed" . PHP_EOL;
     };
-
     $addUpdate = function ($item, $parent) {
         return "Property '$parent{$item['key']}' was added with value: '" .
             castValuePlain($item['value']) . "'" . PHP_EOL;
     };
-
     $nestedTree = function ($item, $parent) {
         return renderPlainBody($item['value'], "$parent{$item['key']}.");
     };

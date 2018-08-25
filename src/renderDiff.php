@@ -24,26 +24,21 @@ function doRenderMethodForTree($method, $firstParam, $secondParam)
     $notUpdate = function ($item, $level) {
         return generateDepth($level - 1) . "    {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
     };
-
     $update = function ($item, $level) {
         return generateDepth($level - 1) . "  - {$item['key']}: " . castValue($item['oldValue'], $level) . PHP_EOL .
             generateDepth($level - 1) . "  + {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
     };
-
     $delUpdate = function ($item, $level) {
         return generateDepth($level - 1) . "  - {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
     };
-
     $addUpdate = function ($item, $level) {
         return generateDepth($level - 1) . "  + {$item['key']}: " . castValue($item['value'], $level) . PHP_EOL;
     };
-
     $nestedTree = function ($item, $level) {
         $internalArray[] = generateDepth($level) . $item['key'] . ": {" . PHP_EOL;
         $internalArray[] = renderChangeTreeBody($item['value'], ($level + 1));
         $internalArray[] = generateDepth($level) . "}" . PHP_EOL;
-        $treeAsString = implode('', $internalArray);
-        return $treeAsString;
+        return implode('', $internalArray);
     };
 
     $actionTypes = [
