@@ -1,6 +1,6 @@
 <?php
 
-namespace Differ;
+namespace Differ\renders;
 
 function renderJson($astTree)
 {

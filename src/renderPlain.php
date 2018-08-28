@@ -1,6 +1,6 @@
 <?php
 
-namespace Differ;
+namespace Differ\renders;
 
 function renderPlain($astTree): string
 {
@@ -49,11 +49,10 @@ function doRenderMethodForPlain($method, $firstParam, $secondParam)
 function castValuePlain($value, $level = 1): string
 {
     if (is_bool($value)) {
-        $result = $value === true ? 'true' : 'false';
+        return $value === true ? 'true' : 'false';
     } elseif (is_array($value)) {
-        $result = 'complex value';
+        return 'complex value';
     } else {
-        $result = $value;
+        return $value;
     }
-    return $result;
 }

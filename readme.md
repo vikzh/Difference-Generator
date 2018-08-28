@@ -37,7 +37,7 @@ Options:
 ## Examples output
 ### Input files
 
-**before.json**
+**- before.json**
 ```json
 {
   "common": {
@@ -57,7 +57,7 @@ Options:
   }
 }
 ```
-**after.json**
+**- after.json**
 ```json
 {
   "common": {
@@ -115,3 +115,5 @@ Setting "common.setting4" added with value "blah blah".
 Setting "group1.baz" changed from "bas" to "bars".
 Section "group2" deleted.
 ```
+###Example of work
+[![asciicast](https://asciinema.org/a/198476.png)](https://asciinema.org/a/198476)

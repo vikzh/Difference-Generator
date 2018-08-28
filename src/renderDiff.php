@@ -1,6 +1,6 @@
 <?php
 
-namespace Differ;
+namespace Differ\renders;
 
 function renderChangeTree($astTree): string
 {
